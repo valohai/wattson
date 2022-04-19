@@ -30,6 +30,7 @@ def test_calculate_scope_3() -> None:
 def test_lerp() -> None:
     assert round(compute_load_to_kwh(SAMPLE_INSTANCE.load_to_kwh, 25)) == 190
 
+
 def test_complete_estimate() -> None:
     instance_type = "a1.large"
     region = "ap-northeast-1"

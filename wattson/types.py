@@ -7,7 +7,7 @@ class EmissionsEstimation:
     data_license: str
     region: str
     hours: float
-    avg_load: str
+    avg_load: float
     instance_type: str
     scope_2_co2eq: float
     scope_3_co2eq: float
