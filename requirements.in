@@ -1,6 +1,0 @@
-twine
-setuptools
-wheel
-mypy 
-black
-pytest

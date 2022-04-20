@@ -8,55 +8,47 @@ name: CI
       - master
 jobs:
   Test:
-    runs-on: '${{ matrix.os }}'
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        os:
-          - ubuntu-20.04
         python-version:
-          - '3.6'
           - '3.7'
           - '3.8'
           - '3.9'
           - '3.10'
     steps:
-      - name: 'Set up Python ${{ matrix.python-version }}'
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
         with:
+          cache: 'pip'
+          cache-dependency-path: '**/setup.cfg'
           python-version: '${{ matrix.python-version }}'
-      - name: Cache multiple paths
-        uses: actions/cache@v2
-        with:
-          path: $HOME/.cache/pip
-          key: '${{ runner.os }}-${{ hashFiles(''**/setup.py'') }}'
-      - uses: actions/checkout@v2
       - run: pip install -U pip setuptools wheel
-      - run: 'pip install -e .'
+      - run: 'pip install -e .[test]'
       - run: py.test -vvv --cov .
       - uses: codecov/codecov-action@v2
   Lint:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
         with:
+          cache: 'pip'
+          cache-dependency-path: '**/setup.cfg'
           python-version: '3.10'
-      - name: Cache multiple paths
-        uses: actions/cache@v2
-        with:
-          path: $HOME/.cache/pip
-          key: '${{ runner.os }}-${{ hashFiles(''**/setup.py'') }}'
-      - uses: actions/checkout@v2
-      - run: pip install -U pip setuptools wheel
-      - run: 'pip install mypy flake8 isort'
-      - run: isort wattson
+      - run: pip install -e .[dev]
+      - run: black --check .
+      - run: isort --check .
       - run: flake8 wattson
       - run: mypy wattson --strict --show-error-codes
   Build:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
         with:
+          cache: 'pip'
+          cache-dependency-path: '**/setup.cfg'
           python-version: '3.10'
-      - uses: actions/checkout@v2
       - run: pip install -U pip setuptools build
       - run: python -m build .
