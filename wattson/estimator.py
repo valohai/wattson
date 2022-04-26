@@ -85,6 +85,9 @@ def estimate_carbon_emissions(
     if not 0 <= load_percentage <= 100:
         raise ValueError(f"Load percentage {load_percentage} not valid.")
 
+    if hours < 0:
+        raise ValueError(f"Hours {hours} must be positive.")
+
     return EmissionsEstimation(
         region=region,
         hours=hours,
