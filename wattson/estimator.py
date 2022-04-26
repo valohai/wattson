@@ -1,6 +1,7 @@
 from typing import Dict
 
 from wattson.data import data_license, instance_data, region_data
+from wattson.interpolation import interpolate_from_table
 from wattson.types import EmissionsEstimation, InstanceData, RegionData
 
 
@@ -11,29 +12,12 @@ def compute_load_to_kwh(
     # if load in instance.load_to_kwh, return it directly
     if int(load_percentage) in load_to_kwh:
         return load_to_kwh[int(load_percentage)]
-    # otherwise, linearly interpolate it from  the nearest values
-    sorted_loads = sorted(load_to_kwh)
-    for i, load in enumerate(sorted_loads):
-        if load < load_percentage < sorted_loads[i + 1]:
-            return lerp_load_to_kwh(
-                load_to_kwh, load_percentage, load, sorted_loads[i + 1]
-            )
-    raise ValueError(
+    # otherwise, linearly interpolate it from the nearest values
+    interpolated = interpolate_from_table(load_to_kwh, load_percentage)
+    if interpolated is not None:
+        return interpolated
+    raise ValueError(  # pragma: no cover
         f"Load percentage {load_percentage} not valid for data {load_to_kwh}"
-    )
-
-
-def lerp_load_to_kwh(
-    load_to_kwh: Dict[int, float],
-    load_percentage: float,
-    low_load: int,
-    high_load: int,
-) -> float:
-    low_kwh = load_to_kwh[low_load]
-    high_kwh = load_to_kwh[high_load]
-    # linearly interpolate between min_load and max_load
-    return low_kwh + (high_kwh - low_kwh) * (load_percentage - low_load) / (
-        high_load - low_load
     )
 
 
