@@ -1,5 +1,5 @@
 name: Publish
-'on':
+"on":
   push:
     tags:
       - "v*"
@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: "3.10"
       - uses: actions/checkout@v2
       - run: pip install -U pip setuptools build twine
       - run: python -m build .
