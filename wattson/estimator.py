@@ -58,13 +58,17 @@ def calculate_scope_3(instance: InstanceData, hours: float) -> float:
 
 
 def estimate_carbon_emissions(
-    region: str, hours: float, instance_type: str, load_percentage: float = 50
+    *,
+    region: str,
+    instance_type: str,
+    hours: float,
+    load_percentage: float = 50,
 ) -> EmissionsEstimation:
     """
     Estimates the carbon emissions of a given region and instance type.
     :param region: AWS region used.
-    :param hours: Execution time in hours.
     :param instance_type: The instance type used.
+    :param hours: Execution time in hours.
     :param load_percentage: The instance average CPU load % 0-100.
     :return: The estimated carbon emissions in eCO2eq.
     """
