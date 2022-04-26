@@ -1,19 +1,19 @@
 import csv
 import io
-from typing import Dict
+from typing import Dict, List
 
 import black
 
 from wattson.types import InstanceData, RegionData
 
 
-def get_regions() -> list[dict[str, str]]:
+def get_regions() -> List[Dict[str, str]]:
     with open("data/aws_regions_intensity.csv") as f:
         regions_data = list(csv.DictReader(f))
     return regions_data
 
 
-def get_instances() -> list[dict[str, str]]:
+def get_instances() -> List[Dict[str, str]]:
     with open("data/aws_instances_dataset.csv") as f:
         instances_data = list(csv.DictReader(f))
     return instances_data
@@ -63,7 +63,7 @@ def convert_instance_data() -> Dict[str, InstanceData]:
     return instance_data
 
 
-def main() -> None:
+def generate_data_py() -> str:
     out = io.StringIO()
     print(
         """
@@ -82,9 +82,14 @@ data_license = "Teads Engineering, CC BY 4.0"
     print("region_data=", convert_region_data(), file=out)
     print("instance_data=", convert_instance_data(), file=out)
     res = black.format_str(out.getvalue(), mode=black.FileMode(line_length=120))
+    return res.replace("# fmt: on", "# fmt: off")
+
+
+def main() -> None:  # pragma: no cover
+    res = generate_data_py()
     with open("wattson/data.py", "w") as f:
-        f.write(res.replace("# fmt: on", "# fmt: off"))
+        f.write(res)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
