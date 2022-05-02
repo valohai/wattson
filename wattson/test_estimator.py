@@ -1,3 +1,5 @@
+import pytest
+
 from wattson.data import instance_data, region_data
 from wattson.estimator import (
     calculate_scope_2,
@@ -46,3 +48,16 @@ def test_complete_estimate() -> None:
 
     # Cross-validate with a known example from Teads calculator
     assert round(result.scope_2_co2eq + result.scope_3_co2eq, 1) == 22.8
+
+
+# fmt: off
+@pytest.mark.parametrize("value_set", [
+    dict(region="xx-mars", instance_type="db.m4.10xlarge", hours=1),
+    dict(region="eu-north-1", instance_type="deep.thought", hours=1),
+    dict(region="eu-north-1", instance_type="db.m4.10xlarge", hours=-1),
+    dict(region="eu-north-1", instance_type="db.m4.10xlarge", hours=1, load_percentage=1500),  # noqa: E501
+])
+# fmt: on
+def test_nonsensical_values(value_set: dict) -> None:  # type: ignore[type-arg]
+    with pytest.raises(ValueError):
+        estimate_carbon_emissions(**value_set)
