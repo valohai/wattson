@@ -11,6 +11,8 @@ class EmissionsEstimation:
     instance_type: str
     scope_2_co2eq: float
     scope_3_co2eq: float
+    compensated: bool
+    details: str
 
 
 @dataclasses.dataclass(frozen=True)
