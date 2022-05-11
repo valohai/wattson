@@ -78,7 +78,7 @@ def estimate_carbon_emissions(
         compensated = True
         details = (
             "The non-renewable energy used in this AWS region has been compensated by renewable energy credits. "  # noqa: E501
-            "See https://sustainability.aboutamazon.com/environment/the-cloud?energyType=true "  # noqa: E501
+            "See https://sustainability.aboutamazon.com/environment/the-cloud?energyType=true"  # noqa: E501
         )
 
     return EmissionsEstimation(
