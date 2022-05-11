@@ -33,9 +33,18 @@ def test_lerp() -> None:
     assert round(compute_load_to_kwh(SAMPLE_INSTANCE.load_to_kwh, 25)) == 190
 
 
-def test_complete_estimate() -> None:
+@pytest.mark.parametrize(
+    ("region", "has_compensation", "expected_emissions"),
+    [
+        ("ca-central-1", True, 14.1),
+        ("eu-north-1", False, 11.3),
+        ("ap-northeast-1", False, 22.8),
+    ],
+)
+def test_complete_estimate(
+    region: str, has_compensation: bool, expected_emissions: float
+) -> None:
     instance_type = "a1.large"
-    region = "ap-northeast-1"
     hours = 3
     load = 50
 
@@ -47,7 +56,11 @@ def test_complete_estimate() -> None:
     )
 
     # Cross-validate with a known example from Teads calculator
-    assert round(result.scope_2_co2eq + result.scope_3_co2eq, 1) == 22.8
+    assert round(result.scope_2_co2eq + result.scope_3_co2eq, 1) == expected_emissions
+    assert (
+        "has been compensated by renewable energy credits" in result.details
+    ) == has_compensation
+    assert result.compensated == has_compensation
 
 
 # fmt: off

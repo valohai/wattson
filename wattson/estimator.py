@@ -1,5 +1,6 @@
 from typing import Dict
 
+from wattson.consts import RENEWABLE_ENERGY_CREDITS_COMPENSATED_REGIONS
 from wattson.data import data_license, instance_data, region_data
 from wattson.interpolation import interpolate_from_table
 from wattson.types import EmissionsEstimation, InstanceData, RegionData
@@ -56,7 +57,6 @@ def estimate_carbon_emissions(
     :param load_percentage: The instance average CPU load % 0-100.
     :return: The estimated carbon emissions in eCO2eq.
     """
-
     instance = instance_data.get(instance_type)
     region_details = region_data.get(region)
 
@@ -72,6 +72,15 @@ def estimate_carbon_emissions(
     if hours < 0:
         raise ValueError(f"Hours {hours} must be positive.")
 
+    compensated = False
+    details = ""
+    if region in RENEWABLE_ENERGY_CREDITS_COMPENSATED_REGIONS:
+        compensated = True
+        details = (
+            "The non-renewable energy used in this AWS region has been compensated by renewable energy credits. "  # noqa: E501
+            "See https://sustainability.aboutamazon.com/environment/the-cloud?energyType=true "  # noqa: E501
+        )
+
     return EmissionsEstimation(
         region=region,
         hours=hours,
@@ -85,4 +94,6 @@ def estimate_carbon_emissions(
         ),
         scope_3_co2eq=calculate_scope_3(instance=instance, hours=hours),
         data_license=data_license,
+        details=details,
+        compensated=compensated,
     )
