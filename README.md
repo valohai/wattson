@@ -16,7 +16,7 @@ You can install this package with pip by running `pip install valohai-wattson`.
 
 If you are currently using AWS instances, you can calculate the carbon emissions for your instances using the following code:
 ```
-from wattson import estiamte_carbon_emissions
+from wattson import estimate_carbon_emissions
 
 training_emissions = estimate_carbon_emissions(
     instance_type='c4.2xlarge',
